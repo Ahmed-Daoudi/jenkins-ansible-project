@@ -1,0 +1,8 @@
+SNAP-REPO=maven-snapshot
+NEXUS-USER=admin
+NEXUS-PASS=ahmedddaa1
+RELEASE-REPO=release
+CENTRAL-REPO=maven-cental
+NEXUS-GRP-REPO=maven-groupe
+NEXUSIP=*.*.*.*
+NEXUSPORT=8081
