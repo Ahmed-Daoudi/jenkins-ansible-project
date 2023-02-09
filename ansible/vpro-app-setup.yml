@@ -3,22 +3,25 @@
   hosts: appsrvgrp
   become: yes
   vars:
+    # using the TimeStump : this variable we ganna use to create backup file and archive for our artifacts
     timestamp: "{{ansible_date_time.date}}_{{ansible_date_time.hour}}_{{ansible_date_time.minute}}"
   tasks:
     - name: Download latest VProfile.war from nexus
       get_url:
+        # exemlpe of url : http://3.84.94.35:8081/repository/release/QA%2F2023-02-38_10-21-04%2FV6%2F2023-02-38_10-21-04-V6.war.md5
         url: "http://{{USER}}:{{PASS}}@{{nexusip}}:8081/repository/{{reponame}}/{{groupid}}/{{time}}/{{build}}/{{vprofile_version}}"
+        # download this url at this location
         dest: "/tmp/vproapp-{{vprofile_version}}"
-      register: wardeploy
+      register: wardeploy # to enregister the out put in this variable
       tags:
        - deploy
 
-    - stat:
+    - stat: # check the statistics of existing artifacts or not in this location
         path: /usr/local/tomcat8/webapps/ROOT
       register: artifact_stat
       tags:
        - deploy
-
+      # if yes then stop tomcat so we can deploy this artifacts
     - name: Stop tomcat svc
       service:
         name: tomcat
@@ -27,12 +30,12 @@
        - deploy
 
     - name: Try Backup and Deploy
-      block:
+      block: #evry play book have a blocks : here is the block for deploying artifacts in tomcat
       - name: Archive ROOT dir with timestamp
         archive:
           path: /usr/local/tomcat8/webapps/ROOT
           dest: "/opt/ROOT_{{timestamp}}.tgz"
-        when: artifact_stat.stat.exists
+        when: artifact_stat.stat.exists # if exists == true then he will take the backup else its empty. 
         register: archive_info
         tags:
          - deploy
@@ -64,11 +67,11 @@
            tags:
             - deploy
         rescue:
-          - shell: cp -r old_ROOT ROOT
+          - shell: cp -r old_ROOT ROOT # in case of fail we get the roll back
             args:
               chdir: /usr/local/tomcat8/webapps/
 
-      rescue:
+      rescue: #if any thing fale some it's come the rescue stage 
        - name: Start tomcat svc
          service:
           name: tomcat
