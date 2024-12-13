@@ -2,6 +2,8 @@
 
 ## Project Overview
 This project implements a fully automated CI/CD pipeline integrating Jenkins, SonarQube, Nexus Repository, and Ansible for efficient code deployment and quality assurance. The pipeline handles the complete lifecycle of application development, from fetching code to deployment on AWS infrastructure.
+
+
 ![jenkins ansible project architecture](https://github.com/Ahmed-Daoudi/jenkins-ansible-project/blob/master/jenkins-ansible-architecture.png)
 
 
